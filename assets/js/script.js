@@ -157,3 +157,97 @@ for (let i = 0; i < navigationLinks.length; i++) {
 
   });
 }
+
+
+
+// Skills Horizontal Scroll
+const skillsValues = {
+  list: document.querySelector("[data-skills-list]"),
+  leftBtn: document.querySelector("[data-skills-scroll-btn='left']"),
+  rightBtn: document.querySelector("[data-skills-scroll-btn='right']"),
+  scrollAmount: 200 // Adjust scroll amount as needed
+}
+
+if (skillsValues.list && skillsValues.leftBtn && skillsValues.rightBtn) {
+
+  const checkScroll = () => {
+    // Only show buttons if content overflows horizontally and screen is wide enough
+    const isOverflowing = skillsValues.list.scrollWidth > skillsValues.list.clientWidth;
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+
+    if (isOverflowing && isDesktop) {
+      skillsValues.leftBtn.classList.add("active");
+      skillsValues.rightBtn.classList.add("active");
+    } else {
+      skillsValues.leftBtn.classList.remove("active");
+      skillsValues.rightBtn.classList.remove("active");
+    }
+  }
+
+  // Initial check and on resize
+  window.addEventListener("load", checkScroll);
+  window.addEventListener("resize", checkScroll);
+
+  // Scroll Logic
+  skillsValues.leftBtn.addEventListener("click", () => {
+    skillsValues.list.scrollBy({
+      left: -skillsValues.scrollAmount,
+      behavior: "smooth"
+    });
+  });
+
+  skillsValues.rightBtn.addEventListener("click", () => {
+    skillsValues.list.scrollBy({
+      left: skillsValues.scrollAmount,
+      behavior: "smooth"
+    });
+  });
+
+}
+
+
+// Project Modal Variables
+const projectItems = document.querySelectorAll("[data-filter-item]");
+const modalContainerProject = document.querySelector("[data-modal-container-project]");
+const modalCloseBtnProject = document.querySelector("[data-modal-close-btn-project]");
+const overlayProject = document.querySelector("[data-overlay-project]");
+
+const modalProjectImg = document.querySelector("[data-modal-project-img]");
+const modalProjectTitle = document.querySelector("[data-modal-project-title]");
+const modalProjectCategory = document.querySelector("[data-modal-project-category]");
+
+// Project Modal Toggle Function
+const projectModalFunc = function () {
+  modalContainerProject.classList.toggle("active");
+  overlayProject.classList.toggle("active");
+}
+
+// Add click event to all project items
+for (let i = 0; i < projectItems.length; i++) {
+
+  projectItems[i].querySelector("a").addEventListener("click", function (e) {
+    e.preventDefault(); // Prevent default link behavior if hash is present
+
+    // Get data from the clicked project item
+    const imgElement = this.querySelector("img");
+    const titleElement = this.querySelector(".project-title");
+    const categoryElement = this.querySelector(".project-category");
+
+    // Populate modal with data
+    modalProjectImg.src = imgElement.src;
+    modalProjectImg.alt = imgElement.alt;
+    modalProjectTitle.innerHTML = titleElement.innerHTML;
+    modalProjectCategory.innerHTML = categoryElement.innerHTML;
+
+    // Show modal
+    projectModalFunc();
+
+  });
+
+}
+
+// Add click event to modal close button and overlay
+if (modalCloseBtnProject && overlayProject) {
+  modalCloseBtnProject.addEventListener("click", projectModalFunc);
+  overlayProject.addEventListener("click", projectModalFunc);
+}
